@@ -2,65 +2,78 @@
 #include <vector>
 #include <stdexcept>
 #include "Graph.hpp"
-using namespace std;
-class Graph
+
+using std::vector;
+
+namespace ariel
 {
-    vector<vector<float>> graph;
-    int rows;
-    int cols;
-    void loadGraph(vector<vector<int>> g)
+    class Graph
     {
-        rows=g.size();
-        graph= vector<vector<float>> (rows);
-        for(int i=0; i<rows;i++)
-        {
-            cols=g[i].size();
-            graph[i] = vector<float>(g[i].size());
-            if(cols!=rows)
-            {
-                throw std::invalid_argument("Invalid graph: The graph is not a square matrix.");
-            }
-        }
-    }
+    private:
+        vector<vector<int>> adjacency_matrix;
+        int vertices;
 
-    void printGraph()
-    {
-        int numOfEdges=0;
-        for (size_t i = 0; i < rows; i++)
+    public:
+        Graph(vector<vector<int>> g)
         {
-           for (size_t j = 0; j < cols; j++)
-           {
-            if (graph[rows][cols]!=0)
-            {
-                numOfEdges++;
-            }
-           } 
+            loadGraph(g);
         }
-        if (isDirected)
-        {
-            numOfEdges/=2;
-        }
-        cout << "Graph with " << graph.size() << "vertices and " << numOfEdges <<"edges." << endl;
-    }
-    bool isDirected()
-    {
-        bool ans = true;
-        for (size_t i = 0; i < rows; i++)
-        {
-           for (size_t j = 0; j < cols; j++)
-           {
-            if (graph[rows][cols]!=graph[cols][rows])
-            {
-                ans=false;
-                break;
-            }
-           }
-           if(!ans)
-           {
-            break;
-           } 
-        }
-        return ans;
-    }
 
-};
+        void loadGraph(vector<vector<int>> g)
+        {
+            vertices = g.size();
+            adjacency_matrix = vector<vector<int>>(vertices);
+            for (int i = 0; i < vertices; i++)
+            {
+                vertices = g[i].size();
+                adjacency_matrix[i] = vector<int>(g[i].size());
+                if (vertices != vertices)
+                {
+                    throw std::invalid_argument("Invalid graph: The graph is not a square matrix.");
+                }
+            }
+        }
+
+        void printGraph()
+        {
+            int numOfEdges = 0;
+            for (size_t i = 0; i < vertices; i++)
+            {
+                for (size_t j = 0; j < vertices; j++)
+                {
+                    if (adjacency_matrix[vertices][vertices] != 0)
+                    {
+                        numOfEdges++;
+                    }
+                }
+            }
+            // if (isDirected)
+            // {
+            //     numOfEdges /= 2;
+            // }
+            std::cout << "Graph with " << adjacency_matrix.size() << "vertices and " << numOfEdges << "edges." << std::endl;
+        }
+
+        // private:
+        //  bool isDirected()
+        //  {
+        //      bool ans = true;
+        //      for (size_t i = 0; i < vertices; i++)
+        //      {
+        //          for (size_t j = 0; j < vertices; j++)
+        //          {
+        //              if (adjacency_matrix[vertices][vertices] != adjacency_matrix[vertices][vertices])
+        //              {
+        //                  ans = false;
+        //                  break;
+        //              }
+        //          }
+        //          if (!ans)
+        //          {
+        //              break;
+        //          }
+        //      }
+        //      return ans;
+        //  }
+    };
+}
