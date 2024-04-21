@@ -1,3 +1,5 @@
+// 214984932 Oriyas.07@gmail.com
+
 #include <iostream>
 #include <vector>
 #include <stdexcept>
@@ -75,5 +77,21 @@ namespace ariel
         //      }
         //      return ans;
         //  }
+
+        ~Graph()
+        {
+            for (int i = 0; i < vertices; i++)
+            {
+                for (int j = 0; j < vertices; j++)
+                {
+                    delete adjacency_matrix.at(i).at(j);
+                }
+            }
+        }
+
+        int getSize()
+        {
+            return vertices;
+        }
     };
 }
