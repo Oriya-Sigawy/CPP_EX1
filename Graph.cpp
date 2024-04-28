@@ -82,11 +82,9 @@ namespace ariel
         {
             for (int i = 0; i < vertices; i++)
             {
-                for (int j = 0; j < vertices; j++)
-                {
-                    delete adjacency_matrix.at(i).at(j);
-                }
+                delete adjacency_matrix[i];
             }
+            delete adjacency_matrix;
         }
 
         int getSize()

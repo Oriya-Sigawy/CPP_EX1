@@ -8,7 +8,7 @@ namespace ariel
 {
     bool isConnected(Graph);
     string shortestPath(Graph, int, int);
-    bool isContainsCycle(Graph);
+    string isContainsCycle(Graph);
     string isBipartite(Graph);
     string negativeCycle(Graph);
 }
