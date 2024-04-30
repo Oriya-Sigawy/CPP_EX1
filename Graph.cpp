@@ -9,92 +9,88 @@ using std::vector;
 
 namespace ariel
 {
-    class Graph
+    Graph::Graph()
     {
-    private:
-        vector<vector<int>> adjacency_matrix;
-        int vertices;
-        int edges;
+        // defult
+        this->vertices = 5;
+        this->adjacency_matrix = vector<vector<int>>(5, vector<int>(5, 0));
+        this->edges = 0;
+        this->directed = false;
+    }
 
-    public:
-        Graph()
+    void Graph::loadGraph(vector<vector<int>> g)
+    {
+        this->vertices = g.size();
+        for (unsigned int i = 0; i < vertices; i++)
         {
-            // defult
-            this->vertices = 5;
-            this->adjacency_matrix = vector<vector<int>>(5, vector<int>(5, 0));
-            edges=0;
-        }
-
-        void loadGraph(vector<vector<int>> g)
-        {
-            this->vertices = g.size();
-            for (int i = 0; i < vertices; i++)
+            if (g[i].size() != vertices)
             {
-                if (g[i].size() != vertices)
-                {
-                    throw std::invalid_argument("this is not a square matrix");
-                }
-            }
-            this->adjacency_matrix = vector<vector<int>>(vertices, vector<int>(vertices));
-            for (int i = 0; i < vertices; i++)
-            {
-                adjacency_matrix[i] = g[i];
+                throw std::invalid_argument("this is not a square matrix");
             }
         }
-
-        void printGraph()
+        this->adjacency_matrix = vector<vector<int>>(vertices, vector<int>(vertices));
+        for (unsigned int i = 0; i < vertices; i++)
         {
-            
-            for (size_t i = 0; i < vertices; i++)
+            adjacency_matrix[i] = g[i];
+        }
+        this->directed = isDirected();
+        for (size_t i = 0; i < vertices; i++)
+        {
+            for (size_t j = 0; j < vertices; j++)
             {
-                for (size_t j = 0; j < vertices; j++)
+                if (adjacency_matrix[i][j] != 0)
                 {
-                    if (adjacency_matrix[vertices][vertices] != 0)
-                    {
-                        this->edges++;
-                    }
+                    this->edges++;
                 }
             }
-            // if (isDirected)
-            // {
-            //     numOfEdges /= 2;
-            // }
-            std::cout << "Graph with " << adjacency_matrix.size() << "vertices and " << this->edges << "edges." << std::endl;
         }
+    }
 
-        bool isDirected()
+    void Graph::printGraph()
+    {
+        // if (isDirected)
+        // {
+        //     numOfEdges /= 2;
+        // }
+        std::cout << "Graph with " << adjacency_matrix.size() << " vertices and " << this->edges << " edges." << std::endl;
+    }
+
+    bool Graph::isDirected()
+    {
+        bool ans = true;
+        for (size_t i = 0; i < vertices; i++)
         {
-            bool ans = true;
-            for (size_t i = 0; i < vertices; i++)
+            for (size_t j = 0; j < vertices; j++)
             {
-                for (size_t j = 0; j < vertices; j++)
+                if (adjacency_matrix[i][j] != adjacency_matrix[j][i])
                 {
-                    if (adjacency_matrix[vertices][vertices] != adjacency_matrix[vertices][vertices])
-                    {
-                        ans = false;
-                        break;
-                    }
-                }
-                if (!ans)
-                {
+                    ans = false;
                     break;
                 }
             }
-            return ans;
+            if (!ans)
+            {
+                break;
+            }
         }
+        return ans;
+    }
 
-        int getSize()
-        {
-            return vertices;
-        }
+    unsigned int Graph::getSize()
+    {
+        return this->vertices;
+    }
 
-        int getAt(int x, int y)
-        {
-            return adjacency_matrix[x][y];
-        }
-        int getEdges()
-        {
-            return edges;
-        }
-    };
+    int Graph::getAt(unsigned int x, unsigned int y)
+    {
+        return this->adjacency_matrix[x][y];
+    }
+    int Graph::getEdges()
+    {
+        return this->edges;
+    }
+    bool Graph::checkDirected()
+    {
+        return this->directed;
+    }
 }
