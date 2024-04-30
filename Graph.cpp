@@ -14,38 +14,44 @@ namespace ariel
     private:
         vector<vector<int>> adjacency_matrix;
         int vertices;
+        int edges;
 
     public:
-        Graph(vector<vector<int>> g)
+        Graph()
         {
-            loadGraph(g);
+            // defult
+            this->vertices = 5;
+            this->adjacency_matrix = vector<vector<int>>(5, vector<int>(5, 0));
+            edges=0;
         }
 
         void loadGraph(vector<vector<int>> g)
         {
-            vertices = g.size();
-            adjacency_matrix = vector<vector<int>>(vertices);
+            this->vertices = g.size();
             for (int i = 0; i < vertices; i++)
             {
-                vertices = g[i].size();
-                adjacency_matrix[i] = vector<int>(g[i].size());
-                if (vertices != vertices)
+                if (g[i].size() != vertices)
                 {
-                    throw std::invalid_argument("Invalid graph: The graph is not a square matrix.");
+                    throw std::invalid_argument("this is not a square matrix");
                 }
+            }
+            this->adjacency_matrix = vector<vector<int>>(vertices, vector<int>(vertices));
+            for (int i = 0; i < vertices; i++)
+            {
+                adjacency_matrix[i] = g[i];
             }
         }
 
         void printGraph()
         {
-            int numOfEdges = 0;
+            
             for (size_t i = 0; i < vertices; i++)
             {
                 for (size_t j = 0; j < vertices; j++)
                 {
                     if (adjacency_matrix[vertices][vertices] != 0)
                     {
-                        numOfEdges++;
+                        this->edges++;
                     }
                 }
             }
@@ -53,43 +59,42 @@ namespace ariel
             // {
             //     numOfEdges /= 2;
             // }
-            std::cout << "Graph with " << adjacency_matrix.size() << "vertices and " << numOfEdges << "edges." << std::endl;
+            std::cout << "Graph with " << adjacency_matrix.size() << "vertices and " << this->edges << "edges." << std::endl;
         }
 
-        // private:
-        //  bool isDirected()
-        //  {
-        //      bool ans = true;
-        //      for (size_t i = 0; i < vertices; i++)
-        //      {
-        //          for (size_t j = 0; j < vertices; j++)
-        //          {
-        //              if (adjacency_matrix[vertices][vertices] != adjacency_matrix[vertices][vertices])
-        //              {
-        //                  ans = false;
-        //                  break;
-        //              }
-        //          }
-        //          if (!ans)
-        //          {
-        //              break;
-        //          }
-        //      }
-        //      return ans;
-        //  }
-
-        ~Graph()
+        bool isDirected()
         {
-            for (int i = 0; i < vertices; i++)
+            bool ans = true;
+            for (size_t i = 0; i < vertices; i++)
             {
-                delete adjacency_matrix[i];
+                for (size_t j = 0; j < vertices; j++)
+                {
+                    if (adjacency_matrix[vertices][vertices] != adjacency_matrix[vertices][vertices])
+                    {
+                        ans = false;
+                        break;
+                    }
+                }
+                if (!ans)
+                {
+                    break;
+                }
             }
-            delete adjacency_matrix;
+            return ans;
         }
 
         int getSize()
         {
             return vertices;
+        }
+
+        int getAt(int x, int y)
+        {
+            return adjacency_matrix[x][y];
+        }
+        int getEdges()
+        {
+            return edges;
         }
     };
 }
