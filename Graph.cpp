@@ -44,14 +44,14 @@ namespace ariel
                 }
             }
         }
+        if(checkDirected())
+        {
+                    edges/=2;
+        }
     }
 
     void Graph::printGraph()
     {
-        // if (isDirected)
-        // {
-        //     numOfEdges /= 2;
-        // }
         std::cout << "Graph with " << adjacency_matrix.size() << " vertices and " << this->edges << " edges." << std::endl;
     }
 
