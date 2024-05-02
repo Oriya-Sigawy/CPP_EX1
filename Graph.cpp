@@ -44,7 +44,7 @@ namespace ariel
                 }
             }
         }
-        if(checkDirected())
+        if(!directed)
         {
                     edges/=2;
         }
@@ -52,23 +52,23 @@ namespace ariel
 
     void Graph::printGraph()
     {
-        std::cout << "Graph with " << adjacency_matrix.size() << " vertices and " << this->edges << " edges." << std::endl;
+        std::cout << "Graph with " << this->vertices << " vertices and " << this->edges << " edges." << std::endl;
     }
 
     bool Graph::isDirected()
     {
-        bool ans = true;
+        bool ans = false;
         for (size_t i = 0; i < vertices; i++)
         {
             for (size_t j = 0; j < vertices; j++)
             {
                 if (adjacency_matrix[i][j] != adjacency_matrix[j][i])
                 {
-                    ans = false;
+                    ans = true;
                     break;
                 }
             }
-            if (!ans)
+            if (ans)
             {
                 break;
             }
@@ -76,7 +76,7 @@ namespace ariel
         return ans;
     }
 
-    unsigned int Graph::getSize()
+    unsigned int Graph::getNumOfVertices()
     {
         return this->vertices;
     }

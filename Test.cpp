@@ -4,6 +4,88 @@
 
 using namespace std;
 
+////tests for Graph.cpp
+TEST_CASE("Test invalid graph")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 1, 2, 0},
+        {1, 0, 3, 0},
+        {2, 3, 0, 4},
+        {0, 0, 4, 0},
+        {0, 0, 0, 5}};
+    CHECK_THROWS(g.loadGraph(graph));
+}
+
+TEST_CASE("Test printGraph")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 1, 1, 0, 0},
+        {1, 0, 4, 0, 2},
+        {1, 4, 0, 3, 0},
+        {0, 0, 3, 0, 1},
+        {0, 2, 0, 1, 0}};
+    g.loadGraph(graph);
+    CHECK(g.printGraph() == "Graph with 5 vertices and 6 edges.");
+
+    vector<vector<int>> graph2 = {
+        {0, 1, 2, 0, 0},
+        {0, 0, 0, 0, 0},
+        {0, 1, 0, 0, 1},
+        {3, 0, 0, 0, 4},
+        {0, 0, 0, 0, 0}};
+    g.loadGraph(graph2);
+    CHECK(g.printGraph() == "Graph with 5 vertices and 6 edges.");
+}
+
+TEST_CASE("Test getNumOfVertices")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 1, 1, 0, 0},
+        {1, 0, 4, 0, 2},
+        {1, 4, 0, 3, 0},
+        {0, 0, 3, 0, 1},
+        {0, 2, 0, 1, 0}};
+    g.loadGraph(graph);
+    CHECK(g.getNumOfVertices() == 5);
+}
+
+TEST_CASE("Test getAt")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 1, 1, 0, 0},
+        {1, 0, 4, 0, 2},
+        {1, 4, 0, 3, 0},
+        {0, 0, 3, 0, 1},
+        {0, 2, 0, 1, 0}};
+    g.loadGraph(graph);
+    CHECK_THROWS(g.getAt(-5, 1));
+    CHECK_THROWS(g.getAt(5, 0));
+    CHECK_THROWS(g.getAt(6, 7));
+    CHECK(g.getAt(2, 0) == 1);
+}
+
+TEST_CASE("Test getEdges")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph1 = {
+        {0, 0},
+        {0, 0}};
+    g.loadGraph(graph1);
+    CHECK(g.getEdges() == 0);
+
+    vector<vector<int>> graph2 = {
+        {0, 1, 1},
+        {1, 0, 1},
+        {1, 1, 0}};
+    g.loadGraph(graph2);
+    CHECK(g.getEdges() == 3);
+}
+
+/////////
 TEST_CASE("Test isConnected")
 {
     ariel::Graph g;

@@ -12,7 +12,7 @@ namespace ariel
     void Algorithms::traverse(unsigned int u, bool *visited, Graph g)
     {
         visited[u] = true;
-        for (unsigned int v = 0; v < g.getSize(); v++)
+        for (unsigned int v = 0; v < g.getNumOfVertices(); v++)
         {
             if (g.getAt(u, v))
             {
@@ -25,8 +25,8 @@ namespace ariel
     }
     bool Algorithms::isConnected(Graph g)
     {
-        unsigned int vertices = g.getSize();
-        bool *visited = new bool[vertices]; // save g.getSize as size instead of calling getSize so much times?
+        unsigned int vertices = g.getNumOfVertices();
+        bool *visited = new bool[vertices]; 
         for (unsigned int u = 0; u < vertices; u++)
         {
             for (unsigned int i = 0; i < vertices; i++)
@@ -62,7 +62,7 @@ namespace ariel
     // Function that implements Dijkstra's single source shortest path algorithm
     string Algorithms::shortestPath(Graph g, int start, int end)
     {
-        unsigned int vertices = g.getSize();
+        unsigned int vertices = g.getNumOfVertices();
         int dist[vertices];
         int prev[vertices];
         bool sptSet[vertices];
@@ -114,7 +114,7 @@ namespace ariel
         // Mark all the vertices as not
         // visited and not part of recursion
         // stack
-        unsigned int vertices = g.getSize();
+        unsigned int vertices = g.getNumOfVertices();
         bool *visited = new bool[vertices];
         bool *isBParent = new bool[vertices];
         unsigned int parents[vertices];
@@ -142,7 +142,7 @@ namespace ariel
                     unsigned int prev_b = parents[b];
                     unsigned int prev_a = parents[a];
                     string result = std::to_string(prev_a);
-                    while (prev_b != -1)
+                    while (parents[prev_b] != INT_MAX)
                     {
                         isBParent[prev_b] = true;
                         prev_b = parents[prev_b];
@@ -175,7 +175,7 @@ namespace ariel
         parents[v] = parent;
         // Recur for all the vertices
         // adjacent to this vertex
-        for (unsigned int i = 0; i < g.getSize(); ++i)
+        for (unsigned int i = 0; i < g.getNumOfVertices(); ++i)
         {
             if (g.getAt(v, i) != 0)
             {
@@ -218,7 +218,7 @@ namespace ariel
             // Recur for all the vertices adjacent to this
             // vertex
 
-            for (unsigned int i = 0; i < g.getSize(); ++i)
+            for (unsigned int i = 0; i < g.getNumOfVertices(); ++i)
             {
                 if (g.getAt(v, i) != 0)
                 {
@@ -243,7 +243,7 @@ namespace ariel
 
         // Mark all the vertices as not visited
         // and not part of recursion stack
-        unsigned int vertices = g.getSize();
+        unsigned int vertices = g.getNumOfVertices();
         bool *visited = new bool[vertices];
         bool *recStack = new bool[vertices];
         for (unsigned int i = 0; i < vertices; i++)
@@ -281,8 +281,8 @@ namespace ariel
         // The value 1 is used to indicate first color is
         // assigned and value 0 indicates second color is
         // assigned.
-        unsigned int vertices = g.getSize();
-        int colorArr[g.getSize()];
+        unsigned int vertices = g.getNumOfVertices();
+        int colorArr[g.getNumOfVertices()];
         for (unsigned int i = 0; i < vertices; ++i)
         {
             colorArr[i] = -1;
@@ -333,7 +333,7 @@ namespace ariel
             q.pop();
 
             // Find all non-colored adjacent vertices
-            for (unsigned int v = 0; v < g.getSize(); ++v)
+            for (unsigned int v = 0; v < g.getNumOfVertices(); ++v)
             {
                 // An edge from u to v exists and
                 // destination v is not colored
@@ -359,7 +359,7 @@ namespace ariel
 
     string Algorithms::negativeCycle(Graph g)
     {
-        unsigned int vertices = g.getSize();
+        unsigned int vertices = g.getNumOfVertices();
         int dist[vertices][vertices];
         for (unsigned int i = 0; i < vertices; i++)
         {

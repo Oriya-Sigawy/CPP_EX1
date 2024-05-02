@@ -20,7 +20,7 @@ namespace ariel
         Graph(); // defult empty constructor
         void loadGraph(vector<vector<int>> g);
         void printGraph();
-        unsigned int getSize();
+        unsigned int getNumOfVertices();
         int getAt(unsigned int x, unsigned int y);
         bool isDirected();
         int getEdges();
