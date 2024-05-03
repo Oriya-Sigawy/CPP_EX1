@@ -103,7 +103,7 @@ namespace ariel
     }
     string Algorithms::isContainsCycle(Graph g)
     {
-        if (g.checkDirected())
+        if (g.isDirected())
         {
             return isContainsCycledirected(g);
         }

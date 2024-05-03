@@ -50,12 +50,32 @@ namespace ariel
         }
     }
 
-    void Graph::printGraph()
+    std::string Graph::to_string()
     {
-        std::cout << "Graph with " << this->vertices << " vertices and " << this->edges << " edges." << std::endl;
+        std::string str_v=std::to_string(this->vertices);
+        std::string str_e=std::to_string(this->edges);
+        return "Graph with " +str_v + " vertices and " + str_e + " edges.";
     }
 
+    unsigned int Graph::getNumOfVertices()
+    {
+        return this->vertices;
+    }
+
+    int Graph::getAt(unsigned int x, unsigned int y)
+    {
+        return this->adjacency_matrix[x][y];
+    }
+    unsigned int Graph::getEdges()
+    {
+        return this->edges;
+    }
     bool Graph::isDirected()
+    {
+        return this->directed;
+    }
+
+       bool Graph::checkDirected()
     {
         bool ans = false;
         for (size_t i = 0; i < vertices; i++)
@@ -74,23 +94,5 @@ namespace ariel
             }
         }
         return ans;
-    }
-
-    unsigned int Graph::getNumOfVertices()
-    {
-        return this->vertices;
-    }
-
-    int Graph::getAt(unsigned int x, unsigned int y)
-    {
-        return this->adjacency_matrix[x][y];
-    }
-    int Graph::getEdges()
-    {
-        return this->edges;
-    }
-    bool Graph::checkDirected()
-    {
-        return this->directed;
     }
 }
