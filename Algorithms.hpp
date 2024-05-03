@@ -15,7 +15,7 @@ namespace ariel
         static bool isConnected(Graph);
         static std::vector<unsigned int> shortestPath(Graph, unsigned int, unsigned int);
         static std::vector<unsigned int> getCycle(Graph);
-        static string bipartitePartition(Graph);
+        static std::array<vector<unsigned int>,2> bipartitePartition(Graph);
         static std::vector<unsigned int> getNegativeCycle(Graph);
 
     private:

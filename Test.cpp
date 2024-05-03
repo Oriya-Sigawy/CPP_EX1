@@ -329,7 +329,14 @@ TEST_CASE("Test bipartitePartition in undirected Graph")
         {1, 0, 1},
         {0, 1, 0}};
     g.loadGraph(graph);
-    CHECK(ariel::Algorithms::bipartitePartition(g) == "The graph is bipartite: A={0, 2}, B={1}");
+    vector<unsigned int> helper1 = {0, 2};
+    vector<unsigned int> helper2 = {1};
+    std::array<vector<unsigned int>, 2> check = {helper1, helper2};
+    std::array<vector<unsigned int>, 2> result = ariel::Algorithms::bipartitePartition(g);
+    for (size_t i = 0; i < result.size(); i++)
+    {
+        CHECK(result[i] == check[i]);
+    }
 }
 
 TEST_CASE("Test bipartitePartition in undirected Graph")
@@ -342,7 +349,8 @@ TEST_CASE("Test bipartitePartition in undirected Graph")
         {0, 0, 1, 0, 0},
         {0, 0, 0, 0, 0}};
     g.loadGraph(graph2);
-    CHECK(ariel::Algorithms::bipartitePartition(g) == "This is a non bipertite graph");
+    std::array<vector<unsigned int>, 2> result = ariel::Algorithms::bipartitePartition(g);
+    CHECK(result[0].size() == 0 && result[1].size() == 0);
 }
 TEST_CASE("Test bipartitePartition in directed Graph")
 {
@@ -353,7 +361,14 @@ TEST_CASE("Test bipartitePartition in directed Graph")
         {0, 0, 0, 0},
         {0, 0, 1, 0}};
     g.loadGraph(graph3);
-    CHECK(ariel::Algorithms::bipartitePartition(g) == "The graph is bipartite: A={0, 3}, B={1, 2}");
+    vector<unsigned int> helper1 = {0, 3};
+    vector<unsigned int> helper2 = {1, 2};
+    std::array<vector<unsigned int>, 2> check = {helper1, helper2};
+    std::array<vector<unsigned int>, 2> result = ariel::Algorithms::bipartitePartition(g);
+    for (size_t i = 0; i < result.size(); i++)
+    {
+        CHECK(result[i] == check[i]);
+    }
 }
 
 TEST_CASE("Test bipartitePartition in directed Graph")
@@ -364,7 +379,8 @@ TEST_CASE("Test bipartitePartition in directed Graph")
         {0, 0, 1},
         {0, 0, 0}};
     g.loadGraph(graph3);
-    CHECK(ariel::Algorithms::bipartitePartition(g) == "This is a non bipertite graph");
+    std::array<vector<unsigned int>, 2> result = ariel::Algorithms::bipartitePartition(g);
+    CHECK(result[0].size() == 0 && result[1].size() == 0);
 }
 
 TEST_CASE("Test getNegativeCycle in undirected graph")
