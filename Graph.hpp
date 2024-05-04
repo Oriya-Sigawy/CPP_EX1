@@ -23,7 +23,7 @@ namespace ariel
         std::string to_string();
         unsigned int getNumOfVertices();
         int getAt(unsigned int x, unsigned int y);
-        unsigned int getEdges();
+        unsigned int getNumOfEdges();
         bool isDirected();
     };
 }
