@@ -2,7 +2,47 @@
 #include "Algorithms.hpp"
 #include "Graph.hpp"
 
-using namespace std;
+bool testCycle(ariel::Graph g, vector<unsigned int> c)
+{
+    for (unsigned int i = 0; i < c.size() - 1; i++)
+    {
+        if (!g.getAt(c[i], c[i + 1]))
+        {
+            return false;
+        }
+    }
+    if (!g.getAt(c[c.size() - 1], c[0]))
+    {
+        return false;
+    }
+    return true;
+}
+
+bool testNegCycle(ariel::Graph g, vector<unsigned int> c)
+{
+    int sum = 0;
+    for (unsigned int i = 0; i < c.size() - 1; i++)
+    {
+        if (!g.getAt(c[i], c[i + 1]))
+        {
+            return false;
+        }
+        else
+        {
+            sum += g.getAt(c[i], c[i + 1]);
+        }
+    }
+    if (!g.getAt(c[c.size() - 1], c[0]))
+    {
+        return false;
+    }
+    sum += g.getAt(c[c.size() - 1], c[0]);
+    if (sum >= 0)
+    {
+        return false;
+    }
+    return true;
+}
 
 ////tests for Graph.cpp
 TEST_CASE("Test invalid graph")
@@ -215,16 +255,29 @@ TEST_CASE("Test isConnected in undirected disconnected graph")
     CHECK(ariel::Algorithms::isConnected(g) == false);
 }
 
-// TEST_CASE("Test isConnected in directed connected graph")
-// {
-//     ariel::Graph g;
-//     vector<vector<int>> graph = {
-//         {0, 0, 0},
-//         {1, 0, 1},
-//         {0, 0, 0}};
-//     g.loadGraph(graph);
-//     CHECK(ariel::Algorithms::isConnected(g) == true);
-// }
+TEST_CASE("Test isConnected in directed weakly connected graph")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 0, 0},
+        {1, 0, 1},
+        {0, 0, 0}};
+    g.loadGraph(graph);
+    CHECK(ariel::Algorithms::isConnected(g) == false);
+}
+
+TEST_CASE("Test isConnected in directed strongly connected graph")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 1, 0, 0, 0},
+        {0, 0, 2, 0, 0},
+        {0, 0, 0, 1, 1},
+        {2, 0, 0, 0, 0},
+        {0, 0, 3, 0, 0}};
+    g.loadGraph(graph);
+    CHECK(ariel::Algorithms::isConnected(g) == true);
+}
 
 TEST_CASE("Test isConnected in directed disconnected graph")
 {
@@ -305,8 +358,8 @@ TEST_CASE("Test shortestPath in directed graph")
 //         {1, 0, 1},
 //         {1, 1, 0}};
 //     g.loadGraph(graph);
-//     vector<unsigned int> check = {0, 1, 2};
-//     CHECK(ariel::Algorithms::getCycle(g) == check);
+//     vector<unsigned int> check = ariel::Algorithms::getCycle(g);
+//     CHECK(testCycle(g, check));
 // }
 
 TEST_CASE("Test getCycle in undirected graph")
@@ -327,9 +380,8 @@ TEST_CASE("Test getCycle in undirected graph")
 //         {1, 0, 0},
 //         {0, 1, 0}};
 //     g.loadGraph(graph);
-//     vector<unsigned int> ans = {0, 2, 1};
-//     bool check = (ariel::Algorithms::getCycle(g) == ans);
-//     CHECK(check == true);
+//     vector<unsigned int> ans = ariel::Algorithms::getCycle(g);
+//     CHECK(testCycle(g, ans));
 // }
 
 TEST_CASE("Test getCycle in directed graph")
@@ -415,9 +467,8 @@ TEST_CASE("Test bipartitePartition in directed Graph")
 //         {1, 0, 2},
 //         {-5, 2, 0}};
 //     g.loadGraph(graph);
-//     vector<unsigned int> ans = {0, 1, 2};
-//     bool check = (ariel::Algorithms::getNegativeCycle(g) == ans);
-//     CHECK(check == true);
+//     vector<unsigned int> ans = ariel::Algorithms::getNegativeCycle(g);
+//     CHECK(testNegCycle(g, ans));
 // }
 
 TEST_CASE("Test getNegativeCycle in undirected graph")
@@ -439,9 +490,8 @@ TEST_CASE("Test getNegativeCycle in undirected graph")
 //         {2, 0, 0, -3},
 //         {0, 0, 0, 0}};
 //     g.loadGraph(graph);
-//     vector<unsigned int> ans = {0, 2, 1};
-//     bool check= (ariel::Algorithms::getNegativeCycle(g) == ans);
-//     CHECK(check==true);
+//     vector<unsigned int> ans = ariel::Algorithms::getNegativeCycle(g);
+//     CHECK(testNegCycle(g, ans));
 // }
 
 TEST_CASE("Test getNegativeCycle in directed graph")

@@ -4,7 +4,7 @@ CXX=g++
 CXXFLAGS=-std=c++11 -Werror -Wsign-conversion -ggdb
 VALGRIND_FLAGS=-v --leak-check=full --show-leak-kinds=all  --error-exitcode=99
 
-SOURCES=Graph.cpp Algorithms.cpp Test.cpp
+SOURCES=Graph.cpp Algorithms.cpp
 OBJECTS=$(subst .cpp,.o,$(SOURCES))
 
 run: demo
@@ -13,7 +13,7 @@ run: demo
 demo: Demo.o Graph.o Algorithms.o
 	$(CXX) $(CXXFLAGS) $^ -o demo
 
-test: Test.o $(OBJECTS) testMain.o
+test:$(OBJECTS) testMain.o
 	$(CXX) $(CXXFLAGS) $^ -o test
 
 testCounter: TestCounter.o 
