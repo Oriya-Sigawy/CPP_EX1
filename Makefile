@@ -13,7 +13,7 @@ run: demo
 demo: Demo.o Graph.o Algorithms.o
 	$(CXX) $(CXXFLAGS) $^ -o demo
 
-test:$(OBJECTS) testMain.o
+test: $(OBJECTS) testMain.o
 	$(CXX) $(CXXFLAGS) $^ -o test
 
 testCounter: TestCounter.o 
@@ -29,5 +29,7 @@ valgrind: demo test
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) --compile $< -o $@
 
+testMain.o: testMain.cpp Test.cpp
+	$(CXX) $(CXXFLAGS) --compile $< -o $@
 clean:
 	rm -f *.o demo test

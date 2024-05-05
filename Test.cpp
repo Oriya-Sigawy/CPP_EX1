@@ -44,6 +44,31 @@ bool testNegCycle(ariel::Graph g, vector<unsigned int> c)
     return true;
 }
 
+bool testBipartite(ariel::Graph g, std::array<vector<unsigned int>, 2> result)
+{
+    for (unsigned int i = 0; i < result[0].size(); i++)
+    {
+        for (unsigned int j = 0; j < result[0].size(); j++)
+        {
+            if (g.getAt(result[0][i], result[0][j]) != 0)
+            {
+                return false;
+            }
+        }
+    }
+    for (unsigned int i = 0; i < result[1].size(); i++)
+    {
+        for (unsigned int j = 0; j < result[1].size(); j++)
+        {
+            if (g.getAt(result[1][i], result[1][j]) != 0)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 ////tests for Graph.cpp
 TEST_CASE("Test invalid graph")
 {
@@ -350,17 +375,17 @@ TEST_CASE("Test shortestPath in directed graph")
     CHECK(ariel::Algorithms::shortestPath(g, 0, 2).size() == 0);
 }
 
-// TEST_CASE("Test getCycle in undirected graph")
-// {
-//     ariel::Graph g;
-//     vector<vector<int>> graph = {
-//         {0, 1, 1},
-//         {1, 0, 1},
-//         {1, 1, 0}};
-//     g.loadGraph(graph);
-//     vector<unsigned int> check = ariel::Algorithms::getCycle(g);
-//     CHECK(testCycle(g, check));
-// }
+TEST_CASE("Test getCycle in undirected graph")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 1, 1},
+        {1, 0, 1},
+        {1, 1, 0}};
+    g.loadGraph(graph);
+    vector<unsigned int> check = ariel::Algorithms::getCycle(g);
+    CHECK(testCycle(g, check));
+}
 
 TEST_CASE("Test getCycle in undirected graph")
 {
@@ -372,17 +397,17 @@ TEST_CASE("Test getCycle in undirected graph")
     CHECK(ariel::Algorithms::getCycle(g).size() == 0);
 }
 
-// TEST_CASE("Test getCycle in directed graph")
-// {
-//     ariel::Graph g;
-//     vector<vector<int>> graph = {
-//         {0, 0, 1},
-//         {1, 0, 0},
-//         {0, 1, 0}};
-//     g.loadGraph(graph);
-//     vector<unsigned int> ans = ariel::Algorithms::getCycle(g);
-//     CHECK(testCycle(g, ans));
-// }
+TEST_CASE("Test getCycle in directed graph")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 0, 1},
+        {1, 0, 0},
+        {0, 1, 0}};
+    g.loadGraph(graph);
+    vector<unsigned int> ans = ariel::Algorithms::getCycle(g);
+    CHECK(testCycle(g, ans));
+}
 
 TEST_CASE("Test getCycle in directed graph")
 {
@@ -403,14 +428,8 @@ TEST_CASE("Test bipartitePartition in undirected Graph")
         {1, 0, 1},
         {0, 1, 0}};
     g.loadGraph(graph);
-    vector<unsigned int> helper1 = {0, 2};
-    vector<unsigned int> helper2 = {1};
-    std::array<vector<unsigned int>, 2> check = {helper1, helper2};
     std::array<vector<unsigned int>, 2> result = ariel::Algorithms::bipartitePartition(g);
-    for (size_t i = 0; i < result.size(); i++)
-    {
-        CHECK(result[i] == check[i]);
-    }
+    CHECK(testBipartite(g, result));
 }
 
 TEST_CASE("Test bipartitePartition in undirected Graph")
@@ -436,14 +455,8 @@ TEST_CASE("Test bipartitePartition in directed Graph")
         {0, 0, 0, 0},
         {0, 0, 1, 0}};
     g.loadGraph(graph3);
-    vector<unsigned int> helper1 = {0, 3};
-    vector<unsigned int> helper2 = {1, 2};
-    std::array<vector<unsigned int>, 2> check = {helper1, helper2};
     std::array<vector<unsigned int>, 2> result = ariel::Algorithms::bipartitePartition(g);
-    for (size_t i = 0; i < result.size(); i++)
-    {
-        CHECK(result[i] == check[i]);
-    }
+    CHECK(testBipartite(g, result));
 }
 
 TEST_CASE("Test bipartitePartition in directed Graph")
@@ -459,17 +472,17 @@ TEST_CASE("Test bipartitePartition in directed Graph")
     CHECK(check == true);
 }
 
-// TEST_CASE("Test getNegativeCycle in undirected graph")
-// {
-//     ariel::Graph g;
-//     vector<vector<int>> graph = {
-//         {0, 1, -5},
-//         {1, 0, 2},
-//         {-5, 2, 0}};
-//     g.loadGraph(graph);
-//     vector<unsigned int> ans = ariel::Algorithms::getNegativeCycle(g);
-//     CHECK(testNegCycle(g, ans));
-// }
+TEST_CASE("Test getNegativeCycle in undirected graph")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 1, -5},
+        {1, 0, 2},
+        {-5, 2, 0}};
+    g.loadGraph(graph);
+    vector<unsigned int> ans = ariel::Algorithms::getNegativeCycle(g);
+    CHECK(testNegCycle(g, ans));
+}
 
 TEST_CASE("Test getNegativeCycle in undirected graph")
 {
@@ -481,18 +494,18 @@ TEST_CASE("Test getNegativeCycle in undirected graph")
     CHECK(ariel::Algorithms::getNegativeCycle(g).size() == 0);
 }
 
-// TEST_CASE("Test getNegativeCycle in directed graph")
-// {
-//     ariel::Graph g;
-//     vector<vector<int>> graph = {
-//         {0, 0, 1, 0},
-//         {-5, 0, 0, 0},
-//         {2, 0, 0, -3},
-//         {0, 0, 0, 0}};
-//     g.loadGraph(graph);
-//     vector<unsigned int> ans = ariel::Algorithms::getNegativeCycle(g);
-//     CHECK(testNegCycle(g, ans));
-// }
+TEST_CASE("Test getNegativeCycle in directed graph")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 0, 1, 0},
+        {-5, 0, 0, 0},
+        {0, 2, 0, -3},
+        {0, 0, 0, 0}};
+    g.loadGraph(graph);
+    vector<unsigned int> ans = ariel::Algorithms::getNegativeCycle(g);
+    CHECK(testNegCycle(g, ans));
+}
 
 TEST_CASE("Test getNegativeCycle in directed graph")
 {

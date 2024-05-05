@@ -1,5 +1,5 @@
 // 214984932 Oriyas.07@gmail.com
-
+// TODO- check delete
 #include <iostream>
 #include <limits.h>
 #include <string.h>
@@ -48,6 +48,7 @@ namespace ariel
         }
     }
     //  Function that implements Dijkstra's single source shortest path algorithm
+    // TODO- test with a neg cycle
     vector<unsigned int> Algorithms::shortestPath(Graph g, unsigned int start, unsigned int end)
     {
         unsigned int vertices = g.getNumOfVertices();
@@ -110,177 +111,82 @@ namespace ariel
 
     vector<unsigned int> Algorithms::getCycle(Graph g)
     {
-        if (g.isDirected())
-        {
-            return getCycledirected(g);
-        }
-        return getCycleUndirected(g);
-    }
-
-    vector<unsigned int> Algorithms::getCycleUndirected(Graph g)
-    {
-        // Mark all the vertices as not
-        // visited and not part of recursion
-        // stack
-        unsigned int vertices = g.getNumOfVertices();
-        bool *visited = new bool[vertices];
-        bool *bParents = new bool[vertices];
-        unsigned int parents[vertices];
-        for (unsigned int i = 0; i < vertices; i++)
-        {
-            visited[i] = false;
-            parents[i] = INT_MAX;
-            bParents[i] = false;
-        }
-
-        // Call the recursive helper
-        // function to detect cycle in different
-        // DFS trees
-        vector<unsigned int> ans;
-        vector<unsigned int> ans2;
-        for (unsigned int u = 0; u < vertices; u++)
-        {
-
-            // Don't recur for u if
-            // it is already visited
-            if (!visited[u])
-            {
-                ans = isCyclic_UD(u, visited, INT_MAX, g, parents);
-                if (ans.size() != 0)
-                {
-                    unsigned int a = ans[0];
-                    unsigned int b = ans[1];
-                    unsigned int prev_b = parents[b];
-                    unsigned int prev_a = a;
-                    while (parents[prev_b] != INT_MAX && !bParents[prev_b])
-                    {
-                        bParents[prev_b] = true;
-                        prev_b = parents[prev_b];
-                    }
-                    while (!bParents[prev_a])
-                    {
-                        ans.push_back(prev_a);
-                        prev_a = parents[prev_a];
-                    }
-                    ans.push_back(prev_a);
-                    prev_b = b;
-                    while (prev_b != prev_a)
-                    {
-                        ans2.push_back(prev_b);
-                        prev_b = parents[prev_b];
-                    }
-                    std::reverse(ans2.begin(), ans2.end());
-                    ans.insert(ans.end(), ans2.begin(), ans2.end());
-                    return ans;
-                }
-            }
-        }
-        return ans;
-    }
-    vector<unsigned int> Algorithms::isCyclic_UD(unsigned int v, bool visited[], unsigned int parent, Graph g, unsigned int parents[])
-    {
-
-        // Mark the current node as visited
-        vector<unsigned int> ans;
-        visited[v] = true;
-        parents[v] = parent;
-        // Recur for all the vertices
-        // adjacent to this vertex
-        for (unsigned int i = 0; i < g.getNumOfVertices(); ++i)
-        {
-            if (g.getAt(v, i) != 0)
-            {
-                // If an adjacent vertex is not visited,
-                // then recur for that adjacent
-                if (!visited[i])
-                {
-                    ans = isCyclic_UD(i, visited, v, g, parents);
-                    if (ans.size() != 0)
-                    {
-                        return ans;
-                    }
-                }
-
-                // If an adjacent vertex is visited and
-                // is not parent of current vertex,
-                // then there exists a cycle in the graph.
-                else if (i != parent)
-                {
-                    ans.push_back(v);
-                    ans.push_back(i);
-                    return ans;
-                }
-            }
-        }
-        return ans;
-    }
-
-    //////////////////////////
-    vector<unsigned int> Algorithms::getCycledirected(Graph g)
-    {
+        bool directed = g.isDirected();
         // Mark all the vertices as not visited
         // and not part of recursion stack
         unsigned int vertices = g.getNumOfVertices();
         vector<unsigned int> result;
-        bool *visited = new bool[vertices];
-        bool *recStack = new bool[vertices];
+        bool *black = new bool[vertices];
+        bool *gray = new bool[vertices];
+        unsigned int *parents = new unsigned int[vertices];
         for (unsigned int i = 0; i < vertices; i++)
         {
-            visited[i] = false;
-            recStack[i] = false;
+            black[i] = false;
+            gray[i] = false;
+            parents[i] = INT_MAX;
         }
 
         // Call the recursive helper function
         // to detect cycle in different DFS trees
         for (unsigned int i = 0; i < vertices; i++)
         {
-            result = isCyclic_D(i, visited, recStack, g);
-            if (!visited[i] && result.size() != 0)
+            if (!black[i])
             {
-                return result;
+                std::array<unsigned int, 2> ans = dfs_visit(directed, i, black, gray, parents, g);
+                if (ans[0] != INT_MAX && ans[1] != INT_MAX)
+                {
+                    unsigned int p = ans[0];
+                    while (p != ans[1])
+                    {
+                        result.push_back(p);
+                        p = parents[p];
+                    }
+                    result.push_back(ans[1]);
+                    std::reverse(result.begin(), result.end());
+                    return result;
+                }
             }
         }
+        delete[] black;
+        delete[] gray;
+        delete[] parents;
         return result;
     }
 
-    vector<unsigned int> Algorithms::isCyclic_D(unsigned int v, bool visited[], bool *recStack, Graph g)
+    std::array<unsigned int, 2> Algorithms::dfs_visit(bool directed, unsigned int v, bool black[], bool *gray, unsigned int parents[], Graph g)
     {
-        vector<unsigned int> ans;
-        if (visited[v] == false)
-        {
-            // Mark the current node as visited
-            // and part of recursion stack
-            visited[v] = true;
-            recStack[v] = true;
+        std::array<unsigned int, 2> ans = {INT_MAX, INT_MAX};
+        // Mark the current node as visited
+        // and part of recursion stack
+        gray[v] = true;
 
-            // Recur for all the vertices adjacent to this
-            // vertex
-            for (unsigned int i = 0; i < g.getNumOfVertices(); ++i)
+        // Recur for all the vertices adjacent to this
+        // vertex
+        for (unsigned int i = 0; i < g.getNumOfVertices(); ++i)
+        {
+            if (g.getAt(v, i) != 0)
             {
-                if (g.getAt(v, i) != 0)
+                if (gray[i] && (directed || !(i == parents[v])))
                 {
-                    ans = isCyclic_D(i, visited, recStack, g);
-                    if (!visited[i] && (ans.size() != 0))
+                    ans[0] = v;
+                    ans[1] = i;
+                    return ans;
+                }
+                else if (!black[i] && !gray[i])
+                {
+                    parents[i] = v;
+                    ans = dfs_visit(directed, i, black, gray, parents, g);
+                    if (ans[0] != INT_MAX && ans[1] != INT_MAX)
                     {
                         return ans;
-                    }
-                    else if (recStack[i])
-                    {
-                        for (unsigned int i = 0; i < g.getNumOfVertices(); i++)
-                        {
-                            if (recStack[i])
-                            {
-                                ans.push_back(i);
-                                return ans;
-                            }
-                        }
                     }
                 }
             }
         }
 
         // Remove the vertex from recursion stack
-        recStack[v] = false;
+        gray[v] = false;
+        black[v] = true;
         return ans;
     }
 
@@ -365,61 +271,129 @@ namespace ariel
         return true;
     }
 
+    //     vector<unsigned int> Algorithms::getNegativeCycle(Graph g)
+    //     {
+    //         vector<unsigned int> ans;
+    //         unsigned int vertices = g.getNumOfVertices();
+    //         unsigned int parents[vertices];
+    //         int dist[vertices][vertices];
+    //         for (unsigned int i = 0; i < vertices; i++)
+    //         {
+    //             parents[i] = INT_MAX;
+    //             for (unsigned int j = 0; j < vertices; j++)
+    //             {
+    //                 dist[i][j] = 0;
+    //             }
+    //         }
+
+    //         for (unsigned int i = 0; i < vertices; i++)
+    //         {
+    //             for (unsigned int j = 0; j < vertices; j++)
+    //             {
+    //                 if (g.getAt(i, j) != 0)
+    //                 {
+    //                     dist[i][j] = g.getAt(i, j);
+    //                 }
+    //             }
+    //         }
+
+    //         for (unsigned int k = 1; k < vertices; k++)
+    //         {
+    //             for (unsigned int i = 0; i < vertices; i++)
+    //             {
+    //                 for (unsigned int j = 0; j < vertices; j++)
+    //                 {
+    //                     if (i != j)
+    //                     {
+    //                         if (dist[i][j] == 0 || dist[i][j] > (dist[i][k] + dist[k][j]))
+    //                         {
+    //                             dist[i][j] = dist[i][k] + dist[k][j];
+    //                             parents[i] = k;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         for (unsigned int i = 0; i < vertices; i++)
+    //         {
+    //             if (dist[i][i] < 0)
+    //             {
+    //                 unsigned int p = parents[i];
+    //                 while (p != i)
+    //                 {
+    //                     ans.push_back(p);
+    //                     p = parents[p];
+    //                 }
+    //             }
+    //         }
+    //         return ans;
+    //     }
+    // }
+//TODO
     vector<unsigned int> Algorithms::getNegativeCycle(Graph g)
     {
-        vector<unsigned int> ans;
         unsigned int vertices = g.getNumOfVertices();
-        unsigned int parents[vertices];
-        int dist[vertices][vertices];
-        for (unsigned int i = 0; i < vertices; i++)
+        for (unsigned int source = 0; source < vertices; source++)
         {
-            for (unsigned int j = 0; j < vertices; j++)
-            {
-                dist[i][j] = 0;
-                parents[i] = INT_MAX;
-            }
-        }
-
-        for (unsigned int i = 0; i < vertices; i++)
-        {
-            for (unsigned int j = 0; j < vertices; j++)
-            {
-                if (g.getAt(i, j) > 0)
-                {
-                    dist[i][j] = g.getAt(i, j);
-                }
-            }
-        }
-
-        for (unsigned int k = 1; k < vertices; k++)
-        {
+            unsigned int parents[vertices];
+            bool *connectedToCycle = new bool[vertices];
+            int dist[vertices];
             for (unsigned int i = 0; i < vertices; i++)
             {
-                for (unsigned int j = 0; j < vertices; j++)
+                parents[i] = INT_MAX;
+                dist[i] = INT_MAX;
+                connectedToCycle[i] = false;
+            }
+            dist[source] = 0;
+            for (unsigned int k = 0; k < vertices; k++)
+            {
+                for (unsigned int i = 0; i < vertices; i++)
                 {
-                    if (i != j)
+                    for (unsigned int j = 0; j < vertices; j++)
                     {
-                        if (dist[i][j] == 0 || dist[i][j] > (dist[i][k] + dist[k][j]))
+                        if (g.getAt(i, j) != 0 && dist[i] != INT_MAX && dist[j] > dist[i] + g.getAt(i, j) && !parents[i] == j)
                         {
-                            dist[i][j] = dist[i][k] + dist[k][j];
-                            parents[i] = k;
+                            dist[j] = dist[i] + g.getAt(i, j);
+                            parents[j] = i;
                         }
                     }
                 }
             }
-        }
-        for (unsigned int i = 0; i < vertices; i++)
-        {
-            if (dist[i][i] < 0)
+            unsigned int cycleStart = INT_MAX;
+            for (unsigned int i = 0; i < vertices; i++)
             {
-                unsigned int p = parents[i];
-                while (p != i)
+                for (unsigned int j = 0; j < vertices; j++)
                 {
-                    ans.push_back(p);
-                    p = parents[p];
+                    if (g.getAt(i, j) != 0 && dist[i] != INT_MAX && dist[j] > dist[i] + g.getAt(i, j) && !parents[i] == j)
+                    {
+                        while (!connectedToCycle[j])
+                        {
+                            connectedToCycle[j] = true;
+                            j = parents[j];
+                        }
+                        cycleStart = j;
+                        break;
+                    }
+                }
+                if (cycleStart != INT_MAX)
+                {
+                    break;
                 }
             }
+            if (cycleStart != INT_MAX)
+            {
+                vector<unsigned int> ans;
+                ans.push_back(cycleStart);
+                unsigned int traverseCycle = parents[cycleStart];
+                while (traverseCycle != cycleStart)
+                {
+                    ans.push_back(traverseCycle);
+                    traverseCycle = parents[traverseCycle];
+                }
+                std::reverse(ans.begin(), ans.end());
+                return ans;
+            }
         }
-        return ans;
+        return vector<unsigned int>();
     }
 }
